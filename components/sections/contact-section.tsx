@@ -161,9 +161,9 @@ export default function ContactSection() {
                         <div className="w-16 h-16 bg-cyan-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-cyan-500/50">
                           <Send className="w-8 h-8 text-cyan-400" />
                         </div>
-                        <h4 className="text-xl font-bold font-sora text-white mb-2">Transmission Successful</h4>
+                        <h4 className="text-xl font-bold font-sora text-white mb-2">Message Sent Successfully</h4>
                         <p className="text-white/70 text-sm mb-4">
-                          [Auto-Reply] Data payload received. Analyzing request and formulating response. Expect a transmission back within 24 standard hours.
+                          Thank you for reaching out. I have received your message and will get back to you as soon as possible, typically within 24 hours.
                         </p>
                         <Button 
                           variant="outline" 
@@ -171,7 +171,7 @@ export default function ContactSection() {
                           onClick={() => setShowAutoReply(false)}
                           className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
                         >
-                          Acknowledge
+                          Close
                         </Button>
                       </div>
                     </motion.div>
