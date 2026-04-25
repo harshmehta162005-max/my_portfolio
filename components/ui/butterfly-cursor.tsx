@@ -40,7 +40,7 @@ function Butterfly({ isFollowing, targetPos }: { isFollowing: boolean; targetPos
     rightWingRef.current.rotation.y = -flapAngle
 
     // 2. PRECISION BOUNDARY CALCULATION
-    const viewAtZ4 = viewport.getCurrentViewport(camera, new THREE.Vector3(0, 0, 4))
+    const viewAtZ4 = viewport.getCurrentViewport(camera, [0, 0, 4])
     const margin = 0.8
     const limitX = (viewAtZ4.width / 2) - margin
     const limitY = (viewAtZ4.height / 2) - margin
@@ -96,13 +96,13 @@ function Butterfly({ isFollowing, targetPos }: { isFollowing: boolean; targetPos
       </group>
       <group ref={leftWingRef} position={[-0.02, 0, 0]}>
         <mesh rotation={[0, Math.PI, 0]} scale={0.8}>
-          <shapeGeometry args={[wingShape]} />
+          <shapeGeometry args={[wingShape as any]} />
           <meshStandardMaterial color="#000000" side={THREE.DoubleSide} metalness={1} roughness={0.05} />
         </mesh>
       </group>
       <group ref={rightWingRef} position={[0.02, 0, 0]}>
         <mesh scale={0.8}>
-          <shapeGeometry args={[wingShape]} />
+          <shapeGeometry args={[wingShape as any]} />
           <meshStandardMaterial color="#000000" side={THREE.DoubleSide} metalness={1} roughness={0.05} />
         </mesh>
       </group>
