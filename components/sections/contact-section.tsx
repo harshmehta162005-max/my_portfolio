@@ -23,17 +23,34 @@ export default function ContactSection() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate network request
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
 
-    setIsSubmitting(false)
-    setShowAutoReply(true)
-    setFormData({ name: "", email: "", message: "" })
-    
-    // Auto-hide the reply simulation after 5 seconds
-    setTimeout(() => {
-      setShowAutoReply(false)
-    }, 5000)
+      const result = await response.json()
+
+      if (response.ok) {
+        setShowAutoReply(true)
+        setFormData({ name: "", email: "", message: "" })
+        
+        // Auto-hide the reply simulation after 8 seconds
+        setTimeout(() => {
+          setShowAutoReply(false)
+        }, 8000)
+      } else {
+        throw new Error(result.error || "Transmission failed")
+      }
+    } catch (error) {
+      console.error("Contact form error:", error)
+      // We could use sonner here if preferred, but for now we'll stick to the UI feedback
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -185,7 +202,7 @@ export default function ContactSection() {
                   </div>
                   <div>
                     <p className="text-xs font-mono text-white/50 uppercase tracking-widest mb-1">Email Endpoint</p>
-                    <a href="mailto:harshmehta.tech@gmail.com" className="text-white hover:text-cyan-400 transition-colors font-medium">harshmehta.tech@gmail.com</a>
+                    <a href="mailto:harshmehta162005@gmail.com" className="text-white hover:text-cyan-400 transition-colors font-medium">harshmehta162005@gmail.com</a>
                   </div>
                 </div>
                 
@@ -203,15 +220,15 @@ export default function ContactSection() {
 
             {/* Social Grid */}
             <div className="grid grid-cols-2 gap-4">
-              <a href="https://github.com/harshm04" target="_blank" rel="noopener noreferrer" className="glass-panel p-6 flex flex-col items-center justify-center gap-3 border-white/10 hover:border-white/30 hover:bg-white/5 transition-all group">
+              <a href="https://github.com/harshmehta162005-max" target="_blank" rel="noopener noreferrer" className="glass-panel p-6 flex flex-col items-center justify-center gap-3 border-white/10 hover:border-white/30 hover:bg-white/5 transition-all group">
                 <Github className="w-8 h-8 text-white group-hover:scale-110 transition-transform" />
                 <span className="font-mono text-sm text-white/70 group-hover:text-white">GitHub</span>
               </a>
-              <a href="#" target="_blank" rel="noopener noreferrer" className="glass-panel p-6 flex flex-col items-center justify-center gap-3 border-[#0077b5]/30 hover:border-[#0077b5]/60 hover:bg-[#0077b5]/10 transition-all group">
+              <a href="https://www.linkedin.com/in/harsh-mehta-8a478236a/" target="_blank" rel="noopener noreferrer" className="glass-panel p-6 flex flex-col items-center justify-center gap-3 border-[#0077b5]/30 hover:border-[#0077b5]/60 hover:bg-[#0077b5]/10 transition-all group">
                 <Linkedin className="w-8 h-8 text-[#0077b5] group-hover:scale-110 transition-transform" />
                 <span className="font-mono text-sm text-[#0077b5]">LinkedIn</span>
               </a>
-              <a href="#" target="_blank" rel="noopener noreferrer" className="glass-panel p-6 flex flex-col items-center justify-center gap-3 border-[#1DA1F2]/30 hover:border-[#1DA1F2]/60 hover:bg-[#1DA1F2]/10 transition-all group">
+              <a href="#" className="glass-panel p-6 flex flex-col items-center justify-center gap-3 border-[#1DA1F2]/30 hover:border-[#1DA1F2]/60 hover:bg-[#1DA1F2]/10 transition-all group opacity-50 cursor-not-allowed">
                 <Twitter className="w-8 h-8 text-[#1DA1F2] group-hover:scale-110 transition-transform" />
                 <span className="font-mono text-sm text-[#1DA1F2]">Twitter</span>
               </a>

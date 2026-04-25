@@ -58,7 +58,8 @@ function Butterfly({ isFollowing, targetPos }: { isFollowing: boolean; targetPos
       finalTarget.z = 4
       
       const dist = currentPos.distanceTo(finalTarget)
-      const lerpFactor = THREE.MathUtils.clamp(0.05 + dist * 0.01, 0.05, 0.1)
+      // Smoother, lazier follow speed (reduced from 0.05-0.1 to 0.03-0.07)
+      const lerpFactor = THREE.MathUtils.clamp(0.03 + dist * 0.008, 0.03, 0.07)
       
       currentPos.lerp(finalTarget, lerpFactor)
       
@@ -128,7 +129,8 @@ export function ButterflyCursor() {
       const x = (e.clientX / window.innerWidth) * 2 - 1
       const y = -(e.clientY / window.innerHeight) * 2 + 1
       const aspect = window.innerWidth / window.innerHeight
-      targetPos.set(x * 6 * aspect, y * 5, 4)
+      // Reduced range from 6x5 to 4.5x3.8
+      targetPos.set(x * 4.5 * aspect, y * 3.8, 4)
       if (!isFollowing) setIsFollowing(true)
     }
 
@@ -138,7 +140,8 @@ export function ButterflyCursor() {
       const x = (touch.clientX / window.innerWidth) * 2 - 1
       const y = -(touch.clientY / window.innerHeight) * 2 + 1
       const aspect = window.innerWidth / window.innerHeight
-      targetPos.set(x * 6 * aspect, y * 5, 4)
+      // Reduced range from 6x5 to 4.5x3.8
+      targetPos.set(x * 4.5 * aspect, y * 3.8, 4)
       if (!isFollowing) setIsFollowing(true)
     }
 
@@ -157,7 +160,8 @@ export function ButterflyCursor() {
     if (!isFollowing) {
       const aspect = window.innerWidth / window.innerHeight
       if (isMobile) {
-        targetPos.set(0, 2.8, 4)
+        // Bring it lower on the screen for mobile so it's not hidden at the very top
+        targetPos.set(0, 1.5, 4)
       } else {
         targetPos.set(1.4 * aspect, 0.45, 4)
       }

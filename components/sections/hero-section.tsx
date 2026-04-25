@@ -107,8 +107,12 @@ export default function HeroSection() {
               variant="outline"
               asChild
             >
-              <a href="/resume.pdf" download="Harsh_Mehta_Resume.pdf">
-                <Download className="mr-2 h-5 w-5 text-pink-500" /> Download Resume
+              <a
+                href="/resumee.pdf"
+                download="Harsh-Mehta-Resume.pdf"
+              >
+                <Download className="mr-2 h-5 w-5 text-pink-500" />
+                Download Resume
               </a>
             </Button>
           </motion.div>
@@ -140,7 +144,7 @@ export default function HeroSection() {
       </div>
 
       {/* Scroll Indicator */}
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 2, duration: 1 }}
@@ -154,7 +158,7 @@ export default function HeroSection() {
             className="w-1.5 h-3 bg-cyan-400 rounded-full mt-1.5 shadow-[0_0_10px_rgba(0,245,255,0.8)]"
           />
         </div>
-      </motion.div>
+      </motion.div> */}
     </section>
   )
 }

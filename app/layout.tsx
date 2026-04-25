@@ -10,15 +10,31 @@ const sora = Sora({ subsets: ["latin"], variable: "--font-sora" })
 
 export const metadata: Metadata = {
   title: "Harsh Mehta — Full-Stack & AI Engineer | Cybercore Nexus",
-  description: "Software Engineering student & Full-Stack AI Engineer. Building production-ready applications with React, Next.js, Node.js, and RAG pipelines.",
-  keywords: ["Harsh Mehta", "developer", "portfolio", "full-stack", "AI engineer", "React", "Next.js", "Node.js"],
+  description: "Specializing in React 19, Next.js 15, and AI-driven SaaS architectures. Software Engineering student building production-ready applications with high-performance real-time features.",
+  keywords: ["Harsh Mehta", "Full-Stack Developer", "AI Engineer", "Next.js 15", "React 19", "Software Engineer Portfolio", "Cybercore Nexus", "RAG Pipelines", "Real-time Web Systems"],
   authors: [{ name: "Harsh Mehta" }],
   openGraph: {
+    title: "Harsh Mehta — Full-Stack & AI Engineer | Cybercore Nexus",
+    description: "Building the next generation of AI-powered web applications.",
+    type: "website",
+    url: "https://harshmehta.tech", // Placeholder for user's domain
+    siteName: "Harsh Mehta Portfolio",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Harsh Mehta Portfolio Preview",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
     title: "Harsh Mehta — Full-Stack & AI Engineer",
     description: "Software Engineering student building production-ready AI-powered applications.",
-    type: "website",
+    images: ["/og-image.png"],
   },
-    generator: 'senotron'
+  generator: 'Harsh Mehta Portfolio'
 }
 
 export default function RootLayout({

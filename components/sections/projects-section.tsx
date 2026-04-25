@@ -19,7 +19,9 @@ const projects = [
       { label: "Latency", value: "<50ms" },
       { label: "Concurrent", value: "10k+" }
     ],
-    aiNotes: "AI Content moderation system planned for v2."
+    aiNotes: "AI Content moderation system planned for v2.",
+    github: "https://github.com/harshmehta162005-max", // Generic for now
+    live: "#"
   },
   {
     id: "creon",
@@ -34,7 +36,9 @@ const projects = [
       { label: "Sync", value: "Real-time" },
       { label: "Auth", value: "Clerk JWT" }
     ],
-    aiNotes: "Utilizes LLMs for intelligent text generation and semantic content suggestions."
+    aiNotes: "Utilizes LLMs for intelligent text generation and semantic content suggestions.",
+    github: "https://github.com/harshmehta162005-max/creon",
+    live: "#"
   },
   {
     id: "bethere",
@@ -49,7 +53,9 @@ const projects = [
       { label: "Uptime", value: "99.9%" },
       { label: "DB", value: "Convex" }
     ],
-    aiNotes: "AI-driven event recommendation engine based on user activity."
+    aiNotes: "AI-driven event recommendation engine based on user activity.",
+    github: "https://github.com/harshmehta162005-max/be_there_final",
+    live: "https://betherefinal.vercel.app/"
   }
 ]
 
@@ -123,7 +129,7 @@ export default function ProjectsSection() {
               <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none p-4">
                 <motion.div
                   layoutId={`card-${expandedId}`}
-                  className="bg-[#0A0A0A] border border-white/10 w-full max-w-3xl rounded-2xl p-6 md:p-10 shadow-2xl overflow-y-auto max-h-[90vh] pointer-events-auto relative"
+                  className="bg-[#0A0A0A] border border-white/10 w-full max-w-3xl rounded-2xl p-6 md:p-10 shadow-2xl overflow-y-auto max-h-[80vh] md:max-h-[90vh] mt-16 md:mt-0 pointer-events-auto relative"
                 >
                   {(() => {
                     const project = projects.find(p => p.id === expandedId)!
@@ -174,11 +180,19 @@ export default function ProjectsSection() {
                           </div>
                         </div>
 
-                        <div className="flex gap-4 pt-6 border-t border-white/10">
-                          <Button className="flex-1 bg-white text-black hover:bg-white/90">
-                            <ExternalLink className="w-4 h-4 mr-2" /> Live Demo
+                        <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-white/10">
+                          <Button 
+                            className="flex-1 bg-white text-black hover:bg-white/90"
+                            onClick={() => window.open(project.live, "_blank")}
+                            disabled={project.live === "#"}
+                          >
+                            <ExternalLink className="w-4 h-4 mr-2" /> {project.live === "#" ? "Coming Soon" : "Live Demo"}
                           </Button>
-                          <Button variant="outline" className="flex-1 border-white/20 hover:bg-white/5">
+                          <Button 
+                            variant="outline" 
+                            className="flex-1 border-white/20 hover:bg-white/5"
+                            onClick={() => window.open(project.github, "_blank")}
+                          >
                             <Github className="w-4 h-4 mr-2" /> Source Code
                           </Button>
                         </div>
