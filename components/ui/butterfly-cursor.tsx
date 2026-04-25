@@ -78,7 +78,7 @@ function Butterfly({ isFollowing, targetPos }: { isFollowing: boolean; targetPos
   })
 
   return (
-    <group ref={meshRef} scale={0.15}>
+    <group ref={meshRef} scale={0.20}>
       <mesh>
         <capsuleGeometry args={[0.04, 0.3, 4, 8]} />
         <meshStandardMaterial color="#000000" metalness={1} roughness={0.1} />
