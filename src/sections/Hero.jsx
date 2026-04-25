@@ -1,115 +1,202 @@
-import React, { Suspense, useEffect, useRef } from "react";
+import React, { Suspense, useRef, useState, useEffect } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { PerspectiveCamera } from '@react-three/drei';
+import { gsap } from 'gsap';
+import { TextPlugin } from 'gsap/TextPlugin';
 
-import { Canvas } from "@react-three/fiber";
-import HackerRoom from "../components/HackerRoom";
-import CanvasLoader from "../components/CanvasLoader";
-import { PerspectiveCamera } from "@react-three/drei";
-import { Leva } from "leva";
-import { useMediaQuery } from "react-responsive";
-
-import { calculateSizes } from "../constants/index.js";
-import HeroCamera from "../components/HeroCamera.jsx";
-import Target from "../components/Target.jsx";
-import ReactLogo from "../components/ReactLogo.jsx";
-import Cube from "../components/Cube.jsx";
-import Rings from "../components/Rings.jsx";
-import Button from "../components/Button.jsx";
-import { gsap } from "gsap";
-import { TextPlugin } from "gsap/TextPlugin";
+import NeuralCore from '../components/NeuralCore';
+import ParticleNebula from '../components/ParticleNebula';
+import NeonGrid from '../components/NeonGrid';
+import CanvasLoader from '../components/CanvasLoader';
+import CanvasErrorBoundary from '../components/CanvasErrorBoundary';
+import { heroData } from '../constants/index';
 
 gsap.registerPlugin(TextPlugin);
 
-const Hero = () => {
-  const isSmall = useMediaQuery({ maxWidth: 440 });
-  const isMobile = useMediaQuery({ maxWidth: 768 });
-  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1024 });
+// ============================================
+// HERO SECTION — Dramatic 3D power-up reveal
+// Central Neural Core + glitch text + particles
+// Full-screen immersive canvas experience
+// ============================================
 
-  const sizes = calculateSizes(isSmall, isMobile, isTablet);
+// Camera rig that follows mouse
+const CameraRig = ({ children }) => {
+  const { camera } = useThree();
 
-  const textRef = useRef(null);
-  const fullText = "Learning & Building Stuff..";
+  useFrame((state) => {
+    const targetX = state.pointer.x * 0.8;
+    const targetY = state.pointer.y * 0.5 + 1;
+    camera.position.x += (targetX - camera.position.x) * 0.02;
+    camera.position.y += (targetY - camera.position.y) * 0.02;
+    camera.lookAt(0, 0, 0);
+  });
+
+  return <group>{children}</group>;
+};
+
+// Post-processing wrapper — loaded dynamically to avoid SSR issues
+const PostEffects = () => {
+  const [PostModule, setPostModule] = useState(null);
 
   useEffect(() => {
-    const tl = gsap.timeline({ repeat: -1 });
-
-    tl.to(textRef.current, {
-      duration: 2,
-      text: fullText,
-      ease: "none",
-      onComplete: () => {
-        gsap.to(textRef.current, {
-          duration: 1,
-          opacity: 1,
-          ease: "power2.inOut",
-          yoyo: true,
-          repeat: 1,
-        });
-      },
+    import('@react-three/postprocessing').then((mod) => {
+      setPostModule(mod);
+    }).catch(() => {
+      console.warn('Post-processing not available');
     });
-
-    tl.to(textRef.current, {
-      duration: 1,
-      opacity: 0,
-      ease: "power2.in",
-      onComplete: () => {
-        gsap.set(textRef.current, { text: "" });
-      },
-    });
-
-    tl.to(textRef.current, {
-      duration: 0.5,
-      opacity: 1,
-      ease: "power2.out",
-    });
-
-    return () => tl.kill(); // Clean up the animation on unmount
   }, []);
 
+  if (!PostModule) return null;
+
+  const { EffectComposer, Bloom, Vignette } = PostModule;
+
   return (
-    <section id="#home" className="h-screen">
-      <div className="w-full mx-auto flex flex-col sm:mt-36 mt-20 c-space gap-3">
-        <p className="text-base sm:text-lg md:text-xl xl:text-3xl font-medium text-white text-center font-generalsans">
-          नमस्ते, I am Sameer... <span className="waving-hand">👋</span>
-        </p>
+    <EffectComposer>
+      <Bloom
+        intensity={1.2}
+        luminanceThreshold={0.15}
+        luminanceSmoothing={0.9}
+        mipmapBlur
+      />
+      <Vignette offset={0.3} darkness={0.65} />
+    </EffectComposer>
+  );
+};
 
-        <p className="hero_tag text-gray_gradient" ref={textRef}></p>
+// The 3D Scene component
+const HeroScene = ({ mousePos }) => {
+  return (
+    <Canvas
+      className="w-full h-full"
+      gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+      dpr={[1, 1.5]}
+      camera={{ position: [0, 1, 8], fov: 50 }}
+    >
+      <Suspense fallback={<CanvasLoader />}>
+        {/* Lighting */}
+        <ambientLight intensity={0.15} />
+        <pointLight position={[5, 5, 5]} color="#00F5FF" intensity={3} distance={20} />
+        <pointLight position={[-5, 3, -5]} color="#FF007A" intensity={2} distance={15} />
+        <pointLight position={[0, -3, 3]} color="#B026FF" intensity={1.5} distance={12} />
+
+        <CameraRig>
+          <NeuralCore mouseX={mousePos.x} mouseY={mousePos.y} scale={1.3} />
+          <ParticleNebula />
+          <NeonGrid />
+        </CameraRig>
+
+        <PostEffects />
+      </Suspense>
+    </Canvas>
+  );
+};
+
+const Hero = () => {
+  const taglineRef = useRef(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [showContent, setShowContent] = useState(false);
+
+  // Track mouse for the NeuralCore
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePos({
+        x: (e.clientX / window.innerWidth) * 2 - 1,
+        y: -(e.clientY / window.innerHeight) * 2 + 1,
+      });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  // Entry animation
+  useEffect(() => {
+    const timer = setTimeout(() => setShowContent(true), 300);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // GSAP tagline typewriter
+  useEffect(() => {
+    if (!taglineRef.current || !showContent) return;
+    const tl = gsap.timeline({ delay: 0.8 });
+
+    tl.fromTo(
+      taglineRef.current,
+      { text: '', opacity: 1 },
+      { text: heroData.tagline, duration: 2, ease: 'none' }
+    );
+
+    return () => tl.kill();
+  }, [showContent]);
+
+  // GSAP entry for hero text
+  useEffect(() => {
+    if (!showContent) return;
+    gsap.fromTo(
+      '.hero-animate',
+      { y: 60, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        stagger: 0.15,
+        ease: 'power3.out',
+        delay: 0.2,
+      }
+    );
+  }, [showContent]);
+
+  return (
+    <section id="home" className="relative h-screen w-full overflow-hidden">
+      {/* Full-screen 3D Canvas with error boundary */}
+      <div className="absolute inset-0 z-0">
+        <CanvasErrorBoundary>
+          <HeroScene mousePos={mousePos} />
+        </CanvasErrorBoundary>
       </div>
 
-      <div className="w-full h-full absolute inset-0">
-        <Canvas className="h-full w-full">
-          <Suspense fallback={<CanvasLoader />}>
-            <Leva hidden />
+      {/* 2D HTML overlay — always renders regardless of Canvas state */}
+      <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 pointer-events-none">
+        <div className={`text-center transition-opacity duration-1000 ${showContent ? 'opacity-100' : 'opacity-0'}`}>
+          {/* Greeting */}
+          <p className="hero-animate font-grotesk text-sm sm:text-base tracking-[0.4em] uppercase text-neon-cyan/70 mb-4">
+            {heroData.greeting} — {heroData.location}
+          </p>
 
-            <PerspectiveCamera makeDefault position={[0, 0, 30]} />
-            <ambientLight intensity={1} />
-            <directionalLight position={[10, 10, 10]} />
+          {/* Name — Glitch effect */}
+          <h1
+            className="hero-animate glitch-text font-outfit font-black text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-white leading-none mb-6 select-none"
+            data-text={heroData.name}
+          >
+            {heroData.name}
+          </h1>
 
-            <HeroCamera isMobile={isMobile}>
-              <HackerRoom
-                scale={sizes.deskScale}
-                position={sizes.deskPosition}
-                rotation={[0.1, -Math.PI, 0]}
-              />
-            </HeroCamera>
-
-            <group>
-              {/* <Target position={sizes.targetPosition} /> */}
-              <ReactLogo position={sizes.reactLogoPosition} />
-              <Cube position={sizes.cubePosition} />
-              <Rings position={sizes.ringPosition} />
-            </group>
-          </Suspense>
-        </Canvas>
-      </div>
-
-      <div className="absolute bottom-[-60px] left-0 right-0 w-full z-10 c-space">
-        <a href="#about" className="w-fit">
-          <Button
-            name="Let's work together"
-            isBeam
-            containerClass="sm:w-fit w-full sm:min-w-96"
+          {/* Tagline — Typewriter */}
+          <p
+            ref={taglineRef}
+            className="hero-animate font-grotesk text-lg sm:text-xl md:text-2xl text-white-700 mb-10 font-light tracking-wide min-h-[2em]"
           />
-        </a>
+
+          {/* CTA Buttons */}
+          <div className="hero-animate flex flex-col sm:flex-row gap-4 justify-center items-center pointer-events-auto">
+            <a href="#about" className="neon-btn magnetic-hover">
+              {heroData.cta1}
+            </a>
+            <a
+              href="#projects"
+              className="px-8 py-3 font-grotesk font-semibold text-sm tracking-wider uppercase text-white-600 hover:text-neon-magenta border border-white/10 hover:border-neon-magenta/30 rounded-xl transition-all duration-300"
+            >
+              {heroData.cta2}
+            </a>
+          </div>
+        </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-auto">
+          <span className="font-mono text-[10px] text-white-500 tracking-[0.3em] uppercase">
+            Scroll
+          </span>
+          <div className="w-[1px] h-8 bg-gradient-to-b from-neon-cyan/50 to-transparent animate-pulse" />
+        </div>
       </div>
     </section>
   );

@@ -1,33 +1,77 @@
-import React from 'react'
-import Navbar from './sections/Navbar'
-import Hero from './sections/Hero'
-import About from './sections/About'
-import Projects from './sections/Projects'
-import Contact from './sections/Contact'
-import Footer from './sections/Footer'
-import Miscellaneous from './sections/Miscellaneous'
+import React, { useState, useEffect, useCallback } from 'react';
+import Navbar from './sections/Navbar';
+import Hero from './sections/Hero';
+import About from './sections/About';
+import Skills from './sections/Skills';
+import Projects from './sections/Projects';
+import Journey from './sections/Journey';
+import Contact from './sections/Contact';
+import Footer from './sections/Footer';
+import NeonCursor from './components/NeonCursor';
+import LoadingScreen from './components/LoadingScreen';
+
+// ============================================
+// NEON NEURAL NEXUS — Main Application Shell
+// Single-page immersive 3D portfolio experience
+// ============================================
 
 const App = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
+
+  const handleLoadComplete = useCallback(() => {
+    setIsLoaded(true);
+  }, []);
+
+  // Track active section for nav highlighting
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+
+    // Small delay to let DOM mount
+    const timer = setTimeout(() => {
+      const sections = document.querySelectorAll('section[id]');
+      sections.forEach((section) => observer.observe(section));
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+      const sections = document.querySelectorAll('section[id]');
+      sections.forEach((section) => observer.unobserve(section));
+    };
+  }, [isLoaded]);
+
   return (
-    <main className='max-w-7xl mx-auto'>
-        <Navbar/>
+    <>
+      {/* Custom neon cursor - desktop only */}
+      <NeonCursor />
+
+      {/* Loading screen with boot-up animation */}
+      <LoadingScreen onComplete={handleLoadComplete} />
+
+      {/* Main content */}
+      <main className="relative bg-void min-h-screen">
+        <Navbar activeSection={activeSection} />
         <Hero />
         <About />
+        <Skills />
         <Projects />
-        <Miscellaneous />
+        <Journey />
         <Contact />
-        <div className='text-4xl flex px-4 justify-center items-center gap-3 text-white-800 flex-wrap pb-2'>
-          <span>Made with</span>
-          <span><img src="/assets/react.svg" alt="react" /></span>
-          <span>,</span>
-          <span><img className='w-8' src="/assets/3js.png" alt="threejs" /></span>
-          <span>,</span>
-          <span><img src="/assets/mixamo.png" className='w-[7rem]' alt="mixamo" /></span>
-
-         </div>
         <Footer />
-    </main>
-  )
-}
+      </main>
+    </>
+  );
+};
 
-export default App
+export default App;

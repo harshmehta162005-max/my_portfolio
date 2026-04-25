@@ -1,139 +1,132 @@
-import { useState } from "react";
-import Globe from "react-globe.gl";
+import React, { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { aboutData } from '../constants/index';
 
-import Button from "../components/Button.jsx";
+gsap.registerPlugin(ScrollTrigger);
+
+// ============================================
+// ABOUT SECTION — Glassmorphic bio panel
+// Reveals on scroll with staggered animations
+// ============================================
 
 const About = () => {
-  const [hasCopied, setHasCopied] = useState(false);
+  const sectionRef = useRef(null);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText("sameersingh192004@gmail.com");
-    setHasCopied(true);
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        '.about-animate',
+        { y: 50, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+    }, sectionRef);
 
-    setTimeout(() => {
-      setHasCopied(false);
-    }, 2000);
-  };
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section className="c-space my-20" id="about">
-      <div className="grid xl:grid-cols-3 xl:grid-rows-6 md:grid-cols-2 grid-cols-1 gap-5 h-full">
-        <div className="col-span-1 xl:row-span-3">
-          <div className="grid-container">
-            <img
-              src="assets/grid1.png"
-              alt="grid-1"
-              className="w-full sm:h-[276px] h-fit object-contain"
-            />
+    <section
+      id="about"
+      ref={sectionRef}
+      className="relative min-h-screen flex items-center justify-center py-24 px-6 sm:px-10"
+    >
+      {/* Background glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-neon-glow opacity-30 pointer-events-none" />
 
-            <div>
-              <p className="grid-headtext">Hi, I’m Sameer Singh</p>
-              <p className="grid-subtext"> 
-              A FullStack developer with experience in JavaScript Frameworks and libraries including both Backend and Frontend. Knows how to create responsive interfaces and deliver high-quality web solutions.
-              </p>
-            </div>
-          </div>
+      <div className="max-w-5xl w-full mx-auto">
+        {/* Section heading */}
+        <div className="about-animate mb-12 text-center">
+          <p className="font-mono text-xs tracking-[0.4em] uppercase text-neon-cyan/60 mb-3">
+            // WHO AM I
+          </p>
+          <h2 className="section-title">{aboutData.title}</h2>
         </div>
 
-        <div className="col-span-1 xl:row-span-3">
-          <div className="grid-container">
-            <img
-              src="assets/newgrid2.png"
-              alt="grid-2"
-              className="w-full rounded-2xl sm:h-[276px] h-fit object-cover"
-            />
+        <div className="grid lg:grid-cols-5 gap-8">
+          {/* Main bio panel */}
+          <div className="about-animate lg:col-span-3 glass-panel-strong p-8 sm:p-10">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-3 h-3 rounded-full bg-neon-cyan animate-glow-pulse" />
+              <span className="font-mono text-xs text-neon-cyan/70 tracking-wider uppercase">
+                System.identity
+              </span>
+            </div>
 
-            <div>
-              <p className="grid-headtext">Tech Stack</p>
-              <p className="grid-subtext">
-                I specialize in a variety of languages, frameworks, and tools
-                that allow me to build robust and scalable applications
-              </p>
+            <p className="font-outfit text-white-700 text-base sm:text-lg leading-relaxed mb-6">
+              {aboutData.bio}
+            </p>
+
+            <p className="font-outfit text-white-600 text-sm sm:text-base leading-relaxed">
+              {aboutData.bio2}
+            </p>
+
+            {/* Location badge */}
+            <div className="mt-8 flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+              <span className="font-grotesk text-sm text-white-600">
+                Based in Delhi, India — Available for remote work worldwide
+              </span>
             </div>
           </div>
-        </div>
 
-        <div className="col-span-1 xl:row-span-4">
-          <div className="grid-container">
-            <div className="rounded-3xl w-full sm:h-[326px] h-fit flex justify-center items-center">
-              <Globe
-                height={326}
-                width={326}
-                backgroundColor="rgba(0, 0, 0, 0)"
-                backgroundImageOpacity={0.5}
-                showAtmosphere
-                showGraticules
-                globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
-                bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
-                labelsData={[
-                  {
-                    lat: 28.47,
-                    lng: 77.4,
-                    text: "I am here !!",
-                    color: "white",
-                    size: 15,
-                  },
-                ]}
-              />
-            </div>
-            <div>
-              <p className="grid-headtext">
-                I’m very flexible with time zone communications & locations
-              </p>
-              <p className="grid-subtext">
-                I&apos;m based in Uttar Pradesh, India and open to remote work
-                worldwide.
-              </p>
-              < p className="text-blue-400 text-sm pt-2">P.S. you can find me on the globe above (;</p>
-              <a href="#contact">
-                <Button
-                  name="Contact Me"
-                  isBeam
-                  containerClass="w-full mt-10"
-                />
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div className="xl:col-span-2 xl:row-span-3">
-          <div className="grid-container">
-            <img
-              src="assets/grid3.png"
-              alt="grid-3"
-              className="w-full sm:h-[266px] h-fit object-contain"
-            />
-
-            <div>
-              <p className="grid-headtext">The Joy of Creating with Code</p>
-              <p className="grid-subtext">
-              It's more than just writing code—it's about solving problems, crafting innovative solutions, and constantly pushing boundaries.
-                I enjoy exploring new technologies, and enhancing my skills.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="xl:col-span-1 xl:row-span-2">
-          <div className="grid-container">
-            <img
-              src="assets/grid4.png"
-              alt="grid-4"
-              className="w-full md:h-[126px] sm:h-[276px] h-fit object-cover sm:object-top"
-            />
-
-            <div className="space-y-2">
-              <p className="grid-subtext text-center">Contact me</p>
-              <div className="copy-container" onClick={handleCopy}>
-                <img
-                  src={hasCopied ? "assets/tick.svg" : "assets/copy.svg"}
-                  alt="copy"
-                />
-                <p className="lg:text-xl md:text-xl font-medium text-gray_gradient text-white">
-                  sameersingh192004@gmail.com
+          {/* Stats cards */}
+          <div className="about-animate lg:col-span-2 flex flex-col gap-4">
+            {aboutData.stats.map((stat, index) => (
+              <div
+                key={index}
+                className="glass-panel p-6 group hover:border-neon-cyan/20 transition-all duration-500"
+              >
+                <p className="font-outfit font-bold text-3xl sm:text-4xl neon-text-cyan mb-1">
+                  {stat.value}
+                </p>
+                <p className="font-grotesk text-sm text-white-500 tracking-wide">
+                  {stat.label}
                 </p>
               </div>
-            </div>
+            ))}
+
+            {/* Resume download */}
+            <a
+              href="/latestResume.pdf"
+              download="Harsh_Resume.pdf"
+              className="glass-panel p-6 flex items-center justify-between group hover:border-neon-violet/30 transition-all duration-500 cursor-pointer"
+            >
+              <div>
+                <p className="font-grotesk font-semibold text-white-800 text-sm tracking-wide">
+                  Download Resume
+                </p>
+                <p className="font-mono text-xs text-white-500 mt-1">
+                  PDF • Updated 2026
+                </p>
+              </div>
+              <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-neon-violet/50 group-hover:bg-neon-violet/10 transition-all duration-300">
+                <svg
+                  className="w-4 h-4 text-white-600 group-hover:text-neon-violet transition-colors"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                  />
+                </svg>
+              </div>
+            </a>
           </div>
         </div>
       </div>
