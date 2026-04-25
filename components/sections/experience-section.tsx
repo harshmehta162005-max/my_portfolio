@@ -94,7 +94,10 @@ export default function ExperienceSection() {
                     whileInView={{ scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.3, duration: 0.4 }}
-                    className={`w-full h-full rounded-full flex items-center justify-center border border-${item.color}-500/50 shadow-[0_0_15px_rgba(var(--${item.color}-500),0.5)]`}
+                    className={`w-full h-full rounded-full flex items-center justify-center border border-${item.color}-500/50`}
+                    style={{
+                      boxShadow: `0 0 15px rgba(var(--${item.color}-500), 0.5)`
+                    }}
                   >
                     {item.icon}
                   </motion.div>
