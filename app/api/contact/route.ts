@@ -19,7 +19,7 @@ export async function POST(request: Request) {
       from: 'Portfolio Contact <onboarding@resend.dev>',
       to: [process.env.CONTACT_EMAIL || 'harshmehta162005@gmail.com'],
       subject: `New Message from ${name} via Portfolio`,
-      reply_to: email,
+      replyTo: email,
       html: `
         <div style="font-family: sans-serif; padding: 20px; color: #333;">
           <h2 style="color: #00f5ff;">New Transmission Received</h2>
